@@ -10,17 +10,17 @@ SentinelOps is a fully serverless incident response platform that uses Anthropic
 
 ## Screenshots
 
-> Dashboard with active incident, AI triage panel, and response actions
+![SentinelOps Dashboard](sentdashboard.png)
+*Main dashboard — incident queue, severity indicators, and active triage view*
 
-![SentinelOps Dashboard](docs/dashboard.png)
+![Root Cause Analysis](root%20cause.png)
+*AI triage panel — confidence ring, probable root cause, and ranked remediation steps*
 
-> AI triage analysis with confidence ring and root cause reasoning
+![Metrics Panel](metrics.png)
+*Metrics panel — live readings with baseline comparison and trend indicators*
 
-![AI Triage Panel](docs/triage-panel.png)
-
-> Incident timeline tracking the full response lifecycle
-
-![Incident Timeline](docs/timeline.png)
+![Response Actions](Response.png)
+*Response actions — Jira, PagerDuty, Slack modals and status lifecycle controls*
 
 ---
 
