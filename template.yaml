@@ -1,0 +1,186 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  SentinelOps — AI-Assisted Incident Triage Platform
+  Serverless backend: API Gateway HTTP API + 4 Lambda functions + DynamoDB
+
+# ─── Global Lambda defaults ───────────────────────────────────────────────────
+Globals:
+  Function:
+    Runtime:      nodejs22.x
+    Architectures: [arm64]          # Graviton2 — ~20% cheaper, same performance
+    Timeout:      30                # analyzeIncident needs time for Claude API call
+    MemorySize:   256
+    CodeUri:      backend/
+    Environment:
+      Variables:
+        DYNAMODB_TABLE_NAME: !Ref IncidentsTable
+        SSM_API_KEY_PATH:    sentinelops-anthropic-api-key
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'  # reuse HTTP connections
+  Api:
+    Cors:
+      AllowOrigin:  "'*'"
+      AllowHeaders: "'Content-Type,Authorization'"
+      AllowMethods: "'GET,POST,PATCH,OPTIONS'"
+
+# ─── Parameters ───────────────────────────────────────────────────────────────
+Parameters:
+  Stage:
+    Type:    String
+    Default: prod
+    AllowedValues: [prod, staging, dev]
+
+# ─── Resources ────────────────────────────────────────────────────────────────
+Resources:
+
+  # ── API Gateway (HTTP API v2) ────────────────────────────────────────────────
+  SentinelOpsApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Stage
+      CorsConfiguration:
+        AllowOrigins:  ['*']
+        AllowHeaders:  ['Content-Type', 'Authorization']
+        AllowMethods:  ['GET', 'POST', 'PATCH', 'OPTIONS']
+
+  # ── DynamoDB table ──────────────────────────────────────────────────────────
+  IncidentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:   sentinelops-incidents
+      BillingMode: PAY_PER_REQUEST   # on-demand — no capacity planning needed
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType:       HASH
+
+  # ── Shared IAM policy ────────────────────────────────────────────────────────
+  # Attached to all Lambdas that need DynamoDB + SSM access.
+  LambdaBasePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: SentinelOpsLambdaBasePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid:      DynamoDBAccess
+            Effect:   Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:Scan
+            Resource: !GetAtt IncidentsTable.Arn
+          - Sid:      SSMReadApiKey
+            Effect:   Allow
+            Action:
+              - ssm:GetParameter
+            Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/sentinelops-anthropic-api-key'
+
+  # ── Lambda: getIncidents ─────────────────────────────────────────────────────
+  GetIncidentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:  sentinelops-getIncidents
+      Handler:       dist/lambdas/getIncidents.handler
+      Description:   List all incidents or fetch a single incident by ID
+      Policies:
+        - !Ref LambdaBasePolicy
+      Events:
+        ListIncidents:
+          Type:       HttpApi
+          Properties:
+            ApiId:   !Ref SentinelOpsApi
+            Path:    /incidents
+            Method:  GET
+        GetIncident:
+          Type:       HttpApi
+          Properties:
+            ApiId:   !Ref SentinelOpsApi
+            Path:    /incidents/{id}
+            Method:  GET
+
+  # ── Lambda: ingestIncident ───────────────────────────────────────────────────
+  IngestIncidentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:  sentinelops-ingestIncident
+      Handler:       dist/lambdas/ingestIncident.handler
+      Description:   Validate → enrich → analyze → persist a new incident
+      Timeout:       60             # extended: includes Claude API round-trip
+      Policies:
+        - !Ref LambdaBasePolicy
+      Events:
+        IngestIncident:
+          Type:       HttpApi
+          Properties:
+            ApiId:   !Ref SentinelOpsApi
+            Path:    /incidents
+            Method:  POST
+
+  # ── Lambda: enrichIncidentContext ────────────────────────────────────────────
+  EnrichIncidentContextFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:  sentinelops-enrichIncidentContext
+      Handler:       dist/lambdas/enrichIncidentContext.handler
+      Description:   Read an incident and return its enriched signal context
+      Policies:
+        - !Ref LambdaBasePolicy
+      Events:
+        EnrichIncident:
+          Type:       HttpApi
+          Properties:
+            ApiId:   !Ref SentinelOpsApi
+            Path:    /incidents/{id}/enrich
+            Method:  POST
+
+  # ── Lambda: analyzeIncident ──────────────────────────────────────────────────
+  AnalyzeIncidentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:  sentinelops-analyzeIncident
+      Handler:       dist/lambdas/analyzeIncident.handler
+      Description:   Re-run AI triage on an existing incident via Claude
+      Timeout:       60             # extended: includes Claude API round-trip
+      Policies:
+        - !Ref LambdaBasePolicy
+      Events:
+        AnalyzeIncident:
+          Type:       HttpApi
+          Properties:
+            ApiId:   !Ref SentinelOpsApi
+            Path:    /incidents/{id}/analyze
+            Method:  POST
+
+  # ── Lambda: updateIncidentStatus ─────────────────────────────────────────────
+  UpdateIncidentStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:  sentinelops-updateIncidentStatus
+      Handler:       dist/lambdas/updateIncidentStatus.handler
+      Description:   Update the lifecycle status of an incident
+      Policies:
+        - !Ref LambdaBasePolicy
+      Events:
+        UpdateStatus:
+          Type:       HttpApi
+          Properties:
+            ApiId:   !Ref SentinelOpsApi
+            Path:    /incidents/{id}/status
+            Method:  PATCH
+
+# ─── Outputs ──────────────────────────────────────────────────────────────────
+Outputs:
+  ApiUrl:
+    Description: Base URL for the SentinelOps API
+    Value:        !Sub 'https://${SentinelOpsApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}'
+    Export:
+      Name: SentinelOpsApiUrl
+
+  IncidentsTableArn:
+    Description: ARN of the DynamoDB incidents table
+    Value:        !GetAtt IncidentsTable.Arn

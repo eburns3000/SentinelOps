@@ -1,0 +1,272 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" width="900" height="680">
+
+  <defs>
+    <!-- Default arrow (gray) -->
+    <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4"
+      markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#484f58"/>
+    </marker>
+    <!-- AI arrow (indigo) -->
+    <marker id="arr-ai" viewBox="0 0 8 8" refX="7" refY="4"
+      markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#8957e5"/>
+    </marker>
+    <!-- Optional / dashed arrow (dim) -->
+    <marker id="arr-opt" viewBox="0 0 8 8" refX="7" refY="4"
+      markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M1,1 L7,4 L1,7 Z" fill="#3d444d"/>
+    </marker>
+  </defs>
+
+  <!-- ═══════════ BACKGROUND ═══════════ -->
+  <rect width="900" height="680" fill="#0d1117"/>
+
+  <!-- ═══════════ TITLE ═══════════ -->
+  <text x="450" y="31" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="15" font-weight="600" fill="#e6edf3">
+    SentinelOps — Architecture Overview
+  </text>
+  <text x="450" y="48" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="10.5" fill="#6e7681">
+    AI-Assisted Incident Triage · AWS Serverless
+  </text>
+
+  <!-- ═══════════ USER ═══════════ -->
+  <rect x="365" y="62" width="170" height="36" rx="8"
+    fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <!-- person icon -->
+  <circle cx="387" cy="76" r="4.5" fill="none" stroke="#6e7681" stroke-width="1.2"/>
+  <path d="M378,92 Q378,84 387,84 Q396,84 396,92" fill="none"
+    stroke="#6e7681" stroke-width="1.2"/>
+  <text x="403" y="77"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="11" font-weight="500" fill="#c9d1d9">Operations Team</text>
+  <text x="403" y="91"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9.5" fill="#6e7681">Browser dashboard</text>
+
+  <!-- arrow: User → Frontend -->
+  <line x1="450" y1="98" x2="450" y2="114"
+    stroke="#484f58" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ═══════════ FRONTEND ═══════════ -->
+  <!-- section label -->
+  <text x="241" y="115"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" font-weight="600" letter-spacing="1.2" fill="#388bfd">FRONTEND</text>
+  <!-- box -->
+  <rect x="241" y="119" width="418" height="52" rx="8"
+    fill="#0d1625" stroke="#1f6feb" stroke-width="1.2"/>
+  <!-- S3 + CloudFront badge -->
+  <rect x="253" y="128" width="116" height="16" rx="3"
+    fill="none" stroke="#1c3d8a" stroke-width="0.8"/>
+  <text x="311" y="139" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" fill="#58a6ff">Amazon S3 + CloudFront</text>
+  <text x="450" y="150" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="13" font-weight="600" fill="#79c0ff">React Dashboard</text>
+  <text x="450" y="164" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9.5" fill="#388bfd">Incident queue · Triage details · AI analysis display</text>
+
+  <!-- arrow: Frontend → API Gateway -->
+  <line x1="450" y1="171" x2="450" y2="187"
+    stroke="#484f58" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ═══════════ API GATEWAY ═══════════ -->
+  <text x="287" y="196"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" font-weight="600" letter-spacing="1.2" fill="#7c3aed">API LAYER</text>
+  <rect x="287" y="200" width="326" height="44" rx="8"
+    fill="#140e1f" stroke="#6e40c9" stroke-width="1.2"/>
+  <text x="450" y="220" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="12.5" font-weight="600" fill="#d2a8ff">Amazon API Gateway</text>
+  <text x="450" y="236" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9.5" fill="#8957e5">HTTP API · Request routing · CORS</text>
+
+  <!-- arrow: API Gateway → Lambda group -->
+  <line x1="450" y1="244" x2="450" y2="263"
+    stroke="#484f58" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ═══════════ LAMBDA GROUP ═══════════ -->
+  <rect x="172" y="267" width="428" height="234" rx="10"
+    fill="#0d1117" stroke="#21262d" stroke-width="1.2"/>
+  <!-- label chip sitting on top border -->
+  <rect x="186" y="261" width="108" height="16" rx="3" fill="#0d1117"/>
+  <text x="192" y="273"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" font-weight="600" letter-spacing="0.8" fill="#6e7681">AWS LAMBDA</text>
+
+  <!-- ── Box 1: ingestIncident ── -->
+  <rect x="335" y="284" width="230" height="34" rx="6"
+    fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="450" y="305" text-anchor="middle"
+    font-family="'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace"
+    font-size="11" fill="#8b949e">ingestIncident</text>
+
+  <!-- arrow: ingest → enrich -->
+  <line x1="450" y1="318" x2="450" y2="332"
+    stroke="#21262d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Box 2: enrichIncidentContext (taller — shows signal sources) ── -->
+  <rect x="318" y="332" width="264" height="60" rx="6"
+    fill="#0f1f14" stroke="#1a4226" stroke-width="1"/>
+  <text x="450" y="350" text-anchor="middle"
+    font-family="'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace"
+    font-size="11" fill="#7ee787">enrichIncidentContext</text>
+  <!-- inner divider -->
+  <line x1="328" y1="358" x2="572" y2="358" stroke="#1a4226" stroke-width="0.7"/>
+  <!-- signal sources: 4 items in two rows -->
+  <circle cx="332" cy="369" r="2.5" fill="#3fb950"/>
+  <text x="340" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#3fb950">Metrics</text>
+  <text x="396" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#484f58">·</text>
+  <circle cx="408" cy="369" r="2.5" fill="#3fb950"/>
+  <text x="416" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#3fb950">Logs</text>
+  <text x="448" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#484f58">·</text>
+  <circle cx="460" cy="369" r="2.5" fill="#3fb950"/>
+  <text x="468" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#3fb950">Deployment</text>
+  <text x="540" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#484f58">·</text>
+  <circle cx="552" cy="369" r="2.5" fill="#3fb950"/>
+  <text x="560" y="373"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#3fb950">Service</text>
+  <!-- row 2 label -->
+  <text x="450" y="386" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" fill="#2a6a38">Aggregates signal context for AI analysis</text>
+
+  <!-- arrow: enrich → analyze -->
+  <line x1="450" y1="392" x2="450" y2="406"
+    stroke="#21262d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Box 3: analyzeIncident — highlighted (AI connection) ── -->
+  <rect x="335" y="406" width="230" height="34" rx="6"
+    fill="#1a0f2d" stroke="#8957e5" stroke-width="1.4"/>
+  <!-- subtle inner glow effect via extra rect -->
+  <rect x="335" y="406" width="230" height="34" rx="6"
+    fill="none" stroke="#8957e5" stroke-width="0.5" opacity="0.3"/>
+  <text x="450" y="427" text-anchor="middle"
+    font-family="'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace"
+    font-size="11" font-weight="600" fill="#d2a8ff">analyzeIncident</text>
+
+  <!-- arrow: analyze → update -->
+  <line x1="450" y1="440" x2="450" y2="454"
+    stroke="#21262d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Box 4: updateIncidentStatus ── -->
+  <rect x="318" y="454" width="264" height="34" rx="6"
+    fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="450" y="475" text-anchor="middle"
+    font-family="'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace"
+    font-size="11" fill="#8b949e">updateIncidentStatus</text>
+
+  <!-- ═══════════ CLAUDE API (external, right of lambda group) ═══════════ -->
+  <!-- Claude box -->
+  <rect x="622" y="396" width="178" height="54" rx="8"
+    fill="#1a0a2e" stroke="#8957e5" stroke-width="1.5"/>
+  <!-- subtle second border for depth -->
+  <rect x="622" y="396" width="178" height="54" rx="8"
+    fill="none" stroke="#d2a8ff" stroke-width="0.4" opacity="0.2"/>
+  <!-- sparkle glyph -->
+  <text x="638" y="419"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="14" fill="#d2a8ff">✦</text>
+  <text x="656" y="420"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="13" font-weight="700" fill="#d2a8ff">Claude</text>
+  <text x="638" y="438"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9.5" fill="#7c3aed">Anthropic · claude-sonnet</text>
+
+  <!-- AI arrow: analyzeIncident → Claude (horizontal, indigo) -->
+  <line x1="565" y1="423" x2="620" y2="423"
+    stroke="#8957e5" stroke-width="1.8" marker-end="url(#arr-ai)"/>
+  <!-- arrow label -->
+  <text x="592" y="416" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8" fill="#8957e5">context</text>
+
+  <!-- Claude "backend only" note -->
+  <text x="711" y="461"
+    text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8" fill="#484f58">Backend access only</text>
+
+  <!-- ═══════════ SSM PARAMETER STORE (dashed, below Claude) ═══════════ -->
+  <!-- arrow: Claude → SSM (dashed vertical) -->
+  <line x1="711" y1="450" x2="711" y2="468"
+    stroke="#30363d" stroke-width="1.2" stroke-dasharray="4 3"
+    marker-end="url(#arr-opt)"/>
+  <!-- SSM box -->
+  <rect x="622" y="468" width="178" height="40" rx="7"
+    fill="#0d1117" stroke="#30363d" stroke-width="0.8" stroke-dasharray="5 3"/>
+  <text x="711" y="484" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9.5" font-weight="500" fill="#6e7681">AWS Systems Manager</text>
+  <text x="711" y="498" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" fill="#484f58">Parameter Store · API key secrets</text>
+
+  <!-- ═══════════ ARROW: Lambda → DynamoDB ═══════════ -->
+  <line x1="450" y1="488" x2="450" y2="520"
+    stroke="#484f58" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ═══════════ DYNAMODB ═══════════ -->
+  <text x="342" y="530"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" font-weight="600" letter-spacing="1.2" fill="#2ea043">DATA</text>
+  <rect x="342" y="534" width="216" height="44" rx="8"
+    fill="#0d1a11" stroke="#1a7432" stroke-width="1.2"/>
+  <text x="450" y="554" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="12.5" font-weight="600" fill="#56d364">Amazon DynamoDB</text>
+  <text x="450" y="569" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9.5" fill="#2ea043">Incident records · Triage results</text>
+
+  <!-- ═══════════ ARROW: DynamoDB → Jira (dashed) ═══════════ -->
+  <line x1="450" y1="578" x2="450" y2="598"
+    stroke="#3d444d" stroke-width="1.2" stroke-dasharray="5 3"
+    marker-end="url(#arr-opt)"/>
+
+  <!-- ═══════════ JIRA / INTEGRATION (optional) ═══════════ -->
+  <rect x="342" y="598" width="216" height="40" rx="8"
+    fill="#191208" stroke="#3d2a04" stroke-width="1" stroke-dasharray="5 3"/>
+  <!-- "optional" pill -->
+  <rect x="348" y="604" width="46" height="12" rx="3"
+    fill="#3d2a04"/>
+  <text x="371" y="613" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="7.5" font-weight="600" fill="#9e6a03">OPTIONAL</text>
+  <text x="450" y="623" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="11.5" font-weight="500" fill="#e3b341">Jira · ServiceNow · PagerDuty</text>
+  <text x="450" y="633" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="9" fill="#9e6a03">Incident ticket creation &amp; escalation</text>
+
+  <!-- ═══════════ FOOTER NOTE ═══════════ -->
+  <text x="450" y="660" text-anchor="middle"
+    font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="8.5" fill="#3d444d">
+    The React frontend has no direct access to the Claude API — all AI analysis executes server-side through AWS Lambda.
+  </text>
+
+</svg>
